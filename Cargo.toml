@@ -1,0 +1,17 @@
+[package]
+name = "bevy_spicy_gamebase"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bevy = { git = "https://github.com/bevyengine/bevy.git" }
+bevy_spicy_ldtk = { git = "https://github.com/TheNeikos/bevy_spicy_ldtk.git" }
+bevy_spicy_aseprite = { path = "../bevy_spicy_aseprite/" }
+bevy_spicy_data = { git = "https://github.com/TheNeikos/bevy_spicy_data.git" }
+aseprite-reader = { git = "https://github.com/TheNeikos/aseprite-reader.git" }
+serde = "1.0.130"
+bevy_simple_tilemap = { git = "https://github.com/TheNeikos/bevy_simple_tilemap.git", branch = "bevy-main" }
+bevy_loading = { git = "https://github.com/TheNeikos/bevy_loading.git", branch = "bevy_main" }
+ron = "0.6.4"
