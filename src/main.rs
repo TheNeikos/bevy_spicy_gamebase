@@ -36,6 +36,7 @@ pub struct GameAssets {
     pub levels: Handle<levels::Project>,
     pub world_sprites: Handle<AsepriteImage>,
     pub ui_sprites: Handle<AsepriteImage>,
+    pub main_font: Handle<Font>,
 }
 impl GameAssets {
     fn add_to_loadtracker(&self, loading: &mut bevy_loading::prelude::AssetsLoading) {
@@ -43,5 +44,6 @@ impl GameAssets {
         loading.add(&self.levels);
         loading.add(&self.world_sprites);
         loading.add(&self.ui_sprites);
+        loading.add(&self.main_font);
     }
 }

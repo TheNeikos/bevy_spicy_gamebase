@@ -26,6 +26,7 @@ fn load_assets(
         levels: asset_server.load("world.ldtk"),
         world_sprites: asset_server.load("world.aseprite"),
         ui_sprites: asset_server.load("ui.aseprite"),
+        main_font: asset_server.load("PressStart2P-Regular.ttf"),
     };
 
     game_assets.add_to_loadtracker(&mut loading);
@@ -34,6 +35,12 @@ fn load_assets(
 }
 
 fn spawn_cameras(mut commands: Commands) {
+    let scale = 1. / 4.;
+    let mut cam = OrthographicCameraBundle::new_2d();
+    cam.transform.scale = Vec3::splat(scale);
+    cam.orthographic_projection.far /= scale;
+    commands.spawn_bundle(cam);
+
     commands.spawn_bundle(UiCameraBundle::default());
 }
 
