@@ -1,3 +1,5 @@
+#![allow(clippy::type_complexity)]
+
 use bevy::prelude::*;
 use bevy_simple_tilemap::plugin::SimpleTileMapPlugin;
 use bevy_spicy_aseprite::AsepriteImage;
@@ -13,9 +15,9 @@ bevy_spicy_data::data_config!(pub config, "assets/game.config");
 
 mod stages;
 mod startup;
-mod world;
-mod utils;
 mod ui;
+mod utils;
+mod world;
 
 fn main() {
     App::new()

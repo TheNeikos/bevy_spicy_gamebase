@@ -212,7 +212,6 @@ fn update_nine_patch_info(
                     top: Val::Px(from_top_left.y),
                     right: Val::Px(from_bottom_right.x),
                     bottom: Val::Px(from_bottom_right.y),
-                    ..Default::default()
                 };
             }
         }
@@ -482,7 +481,6 @@ pub fn create_nine_patch<'w, 's, 'a, 'f>(
                 top: Val::Px(from_top_left.y),
                 right: Val::Px(from_bottom_right.x),
                 bottom: Val::Px(from_bottom_right.y),
-                ..Default::default()
             },
             ..style.unwrap_or_default()
         },
@@ -496,7 +494,7 @@ pub fn create_nine_patch<'w, 's, 'a, 'f>(
 
     center
         .insert(FocusPolicy::Pass)
-        .insert(aseprite_handle.clone())
+        .insert(aseprite_handle)
         .insert(NinePatch {
             nine_patch: NineSlice::Center,
             slice_name: slice.name.clone(),
@@ -556,11 +554,8 @@ impl<T: Component + Clone> ButtonPressCommand<T> {
         >,
     ) {
         for (interaction, button_press_command) in button_query.iter() {
-            match *interaction {
-                Interaction::Clicked => {
-                    events.send(button_press_command.event.clone());
-                }
-                _ => {}
+            if let Interaction::Clicked = *interaction {
+                events.send(button_press_command.event.clone());
             }
         }
     }

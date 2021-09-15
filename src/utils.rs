@@ -13,7 +13,7 @@ impl<A: Asset> GetSubHandle for Handle<A> {
         match id {
             HandleId::Id(_, _) => Handle::default(),
             HandleId::AssetPathId(asset_path_id) => {
-                let new_asset_path_id: AssetPathId = asset_path_id.clone();
+                let new_asset_path_id: AssetPathId = asset_path_id;
 
                 let source_path = new_asset_path_id.source_path_id();
                 let new_label: LabelId = Some(label).into();
