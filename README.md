@@ -24,4 +24,8 @@ It is meant as an experiment to see how ergonomic bevy game development can be
 - `utils.rs`
   - Various helper and extension traits
 - `stages/`
-  - Each stage gets its own module
+  - Each stage has its own module
+  - `loading.rs`
+    - Handles showing the loading screen and waits until all assets in `GameAssets` are done loading
+  - `main_menu.rs`
+    - The main menu, it handles starting the game/configuration/save games
