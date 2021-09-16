@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use bevy_loading::prelude::AssetsLoading;
 
 use crate::{
+    camera::Free2DCamera,
     utils::{AsepriteTextureAtlasConfiguration, AsepriteTileAtlasBundle},
     GameAssets,
 };
@@ -54,11 +55,12 @@ fn load_assets(
 }
 
 fn spawn_cameras(mut commands: Commands) {
-    let scale = 1. / 4.;
-    let mut cam = OrthographicCameraBundle::new_2d();
-    cam.transform.scale = Vec3::splat(scale);
-    cam.orthographic_projection.far /= scale;
-    commands.spawn_bundle(cam);
+    commands
+        .spawn_bundle(OrthographicCameraBundle::new_2d())
+        .insert(Free2DCamera {
+            current_zoom: 1.,
+            zoom_levels: 1..4,
+        });
 
     commands.spawn_bundle(UiCameraBundle::default());
 }

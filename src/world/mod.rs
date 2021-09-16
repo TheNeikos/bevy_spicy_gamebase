@@ -26,7 +26,11 @@ impl Plugin for WorldPlugin {
                         .after(WorldSystems::WorldSetup),
                 ),
         );
-        app.add_system_set(SystemSet::on_update(GameState::Running).with_system(load_new_levels));
+        app.add_system_set(
+            SystemSet::on_update(GameState::Running)
+                .with_system(load_new_levels)
+                .with_system(update_levels),
+        );
         app.add_system_set(
             SystemSet::on_exit(GameState::Running).with_system(startup::remove_level),
         );
@@ -48,15 +52,21 @@ pub struct Level;
 pub struct LevelBundle {
     pub level: Level,
     pub level_name: LevelName,
+    pub level_handle: Handle<crate::levels::Project>,
 }
 
 pub struct DefaultLevels(pub Vec<String>);
 
-fn insert_configured_levels(mut commands: Commands, default_levels: Option<Res<DefaultLevels>>) {
+fn insert_configured_levels(
+    mut commands: Commands,
+    game_assets: Res<GameAssets>,
+    default_levels: Option<Res<DefaultLevels>>,
+) {
     if let Some(default_levels) = default_levels {
         for level in &default_levels.0 {
             commands.spawn_bundle(LevelBundle {
                 level_name: LevelName(level.clone()),
+                level_handle: game_assets.levels.clone(),
                 ..Default::default()
             });
         }
@@ -109,6 +119,52 @@ fn load_new_levels(
                 ..Default::default()
             });
         });
+    }
+}
+
+fn update_levels(
+    mut level_asset_events: EventReader<AssetEvent<crate::levels::Project>>,
+    ldtk_assets: Res<Assets<crate::levels::Project>>,
+    level_query: Query<(&Handle<crate::levels::Project>, &LevelName, &Children)>,
+    mut tile_map_query: Query<&mut TileMap>,
+) {
+    for asset_event in level_asset_events.iter() {
+        let asset_handle = match asset_event {
+            AssetEvent::Created { handle } | AssetEvent::Modified { handle } => handle,
+            AssetEvent::Removed { .. } => continue,
+        };
+
+        for (level_handle, level_name, children) in level_query.iter() {
+            if asset_handle != level_handle {
+                continue;
+            }
+
+            let ldtk_project = if let Some(ldtk) = ldtk_assets.get(level_handle) {
+                ldtk
+            } else {
+                error!("Could not get ldtk level for newly spawned level");
+                continue;
+            };
+
+            let ldtk_level = if let Some(level) = ldtk_project
+                .levels
+                .iter()
+                .find(|level| level.identifier == level_name.0)
+            {
+                level
+            } else {
+                error!("Could not find level with name {} in project", level_name.0);
+                continue;
+            };
+
+            for child in children.iter() {
+                if let Ok(mut tile_map) = tile_map_query.get_mut(*child) {
+                    tile_map.clear();
+
+                    add_layer(&ldtk_level.layers.front, 2, &mut tile_map);
+                }
+            }
+        }
     }
 }
 

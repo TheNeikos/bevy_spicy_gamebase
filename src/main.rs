@@ -13,6 +13,7 @@ bevy_spicy_ldtk::ldtk!(pub levels, "assets/world.ldtk");
 // Configuration for the game
 bevy_spicy_data::data_config!(pub config, "assets/game.config");
 
+mod camera;
 mod stages;
 mod startup;
 mod ui;
@@ -28,6 +29,7 @@ fn main() {
         .add_plugin(bevy_spicy_ldtk::LdtkPlugin::<levels::Project>::default())
         .add_plugin(utils::UtilsPlugin::default())
         .add_plugin(ui::UiPlugin::default())
+        .add_plugin(camera::CameraPlugin::default())
         .add_plugin(stages::StagesPlugin::default())
         .add_plugin(startup::StartupPlugin::default())
         .add_plugin(world::WorldPlugin::default())
