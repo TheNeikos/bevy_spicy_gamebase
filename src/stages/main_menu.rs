@@ -4,6 +4,7 @@ use bevy_spicy_aseprite::{AsepriteImage, AsepriteSliceName};
 use crate::{
     ui::{create_nine_patch, ButtonPressCommand, NinePatchButton},
     utils::GetSubHandle,
+    world::DefaultLevels,
     GameAssets,
 };
 
@@ -31,6 +32,8 @@ enum MainMenuEvents {
 }
 
 fn listen_for_menu_events(
+    mut commands: Commands,
+    mut state: ResMut<State<GameState>>,
     mut main_menu_events: EventReader<MainMenuEvents>,
     mut exit_events: EventWriter<AppExit>,
 ) {
@@ -40,7 +43,10 @@ fn listen_for_menu_events(
         Some(&MainMenuEvents::Exit) => {
             exit_events.send(AppExit);
         }
-        Some(&MainMenuEvents::StartGame) => {}
+        Some(&MainMenuEvents::StartGame) => {
+            commands.insert_resource(DefaultLevels(vec![String::from("Level_0")]));
+            state.set(GameState::Running).unwrap();
+        }
         None => {}
     }
 }

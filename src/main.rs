@@ -26,6 +26,7 @@ fn main() {
         .add_plugin(bevy_spicy_data::TomlConfigPlugin::<config::Root>::default())
         .add_plugin(bevy_spicy_aseprite::AsepritePlugin)
         .add_plugin(bevy_spicy_ldtk::LdtkPlugin::<levels::Project>::default())
+        .add_plugin(utils::UtilsPlugin::default())
         .add_plugin(ui::UiPlugin::default())
         .add_plugin(stages::StagesPlugin::default())
         .add_plugin(startup::StartupPlugin::default())
@@ -37,6 +38,7 @@ pub struct GameAssets {
     pub config: Handle<config::Root>,
     pub levels: Handle<levels::Project>,
     pub world_sprites: Handle<AsepriteImage>,
+    pub world_tile_atlas: Handle<TextureAtlas>,
     pub ui_sprites: Handle<AsepriteImage>,
     pub main_font: Handle<Font>,
 }
@@ -45,6 +47,7 @@ impl GameAssets {
         loading.add(&self.config);
         loading.add(&self.levels);
         loading.add(&self.world_sprites);
+        loading.add(&self.world_tile_atlas);
         loading.add(&self.ui_sprites);
         loading.add(&self.main_font);
     }

@@ -10,6 +10,7 @@ mod main_menu;
 pub enum GameState {
     Loading,
     MainMenu,
+    Running
 }
 
 #[derive(Debug, Default)]

@@ -1,7 +1,10 @@
 use bevy::prelude::*;
 use bevy_loading::prelude::AssetsLoading;
 
-use crate::GameAssets;
+use crate::{
+    utils::{AsepriteTextureAtlasConfiguration, AsepriteTileAtlasBundle},
+    GameAssets,
+};
 
 #[derive(Debug, Default)]
 pub struct StartupPlugin;
@@ -17,14 +20,30 @@ impl Plugin for StartupPlugin {
 fn load_assets(
     mut commands: Commands,
     asset_server: ResMut<AssetServer>,
+    texture_atlas_assets: ResMut<Assets<TextureAtlas>>,
     mut loading: ResMut<AssetsLoading>,
 ) {
     asset_server.watch_for_changes().unwrap();
 
+    let world_sprites = asset_server.load("world.aseprite");
+    let world_tile_atlas = texture_atlas_assets.get_handle(Handle::<TextureAtlas>::default());
+
+    commands.spawn_bundle(AsepriteTileAtlasBundle::new(
+        world_sprites.clone(),
+        world_tile_atlas.clone(),
+        AsepriteTextureAtlasConfiguration {
+            tile_size: Vec2::new(16., 16.),
+            columns: 8,
+            rows: 8,
+            padding: Vec2::ZERO,
+        },
+    ));
+
     let game_assets = GameAssets {
         config: asset_server.load("game.config"),
         levels: asset_server.load("world.ldtk"),
-        world_sprites: asset_server.load("world.aseprite"),
+        world_sprites,
+        world_tile_atlas,
         ui_sprites: asset_server.load("ui.aseprite"),
         main_font: asset_server.load("PressStart2P-Regular.ttf"),
     };
