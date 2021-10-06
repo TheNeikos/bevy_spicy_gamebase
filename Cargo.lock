@@ -586,7 +586,7 @@ dependencies = [
 [[package]]
 name = "bevy_simple_tilemap"
 version = "0.5.1"
-source = "git+https://github.com/TheNeikos/bevy_simple_tilemap.git?branch=bevy-main#1882098ac680619635741fa43a1926efe962ee29"
+source = "git+https://github.com/TheNeikos/bevy_simple_tilemap.git?branch=bevy-main#97dae8e0c69fdafea572954875a61fe13f2ddf80"
 dependencies = [
  "bevy",
  "bitflags",
