@@ -1,4 +1,4 @@
-use std::ops::Range;
+use std::ops::RangeInclusive;
 
 use bevy::{
     input::mouse::{MouseMotion, MouseWheel},
@@ -30,8 +30,28 @@ impl Plugin for CameraPlugin {
 
 pub struct Free2DCamera {
     pub current_scale: f32,
-    pub scale_levels: Range<u32>,
-    pub limit: Option<Rect<f32>>,
+    pub scale_levels: RangeInclusive<f32>,
+    pub limits: Option<Rect<f32>>,
+}
+
+impl Free2DCamera {
+    pub fn new(current_scale: f32) -> Free2DCamera {
+        Self {
+            current_scale,
+            scale_levels: current_scale..=current_scale,
+            limits: None,
+        }
+    }
+
+    pub fn with_scale_range(mut self, scale_levels: RangeInclusive<f32>) -> Self {
+        self.scale_levels = scale_levels;
+        self
+    }
+
+    pub fn with_limits(mut self, limits: Option<Rect<f32>>) -> Self {
+        self.limits = limits;
+        self
+    }
 }
 
 fn update_camera(
@@ -88,8 +108,8 @@ fn update_camera(
                 .unwrap_or(screen_size / 2.0);
 
             let new_scale = (free_2d_camera.current_scale + zoom_scroll)
-                .min(free_2d_camera.scale_levels.end as f32)
-                .max(free_2d_camera.scale_levels.start as f32);
+                .min(*free_2d_camera.scale_levels.end())
+                .max(*free_2d_camera.scale_levels.start());
 
             let pos_change = ((screen_size / free_2d_camera.current_scale)
                 - (screen_size / new_scale))
@@ -131,7 +151,7 @@ fn clamp_camera(
             continue;
         }
 
-        if let Some(limit) = free_2d_camera.limit.as_ref() {
+        if let Some(limit) = free_2d_camera.limits.as_ref() {
             let half_scaled_screen_size = screen_size / 2. / free_2d_camera.current_scale;
 
             let left_right_pixels = transform.translation.xx()

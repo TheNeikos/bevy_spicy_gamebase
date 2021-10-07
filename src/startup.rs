@@ -57,10 +57,7 @@ fn load_assets(
 fn spawn_cameras(mut commands: Commands) {
     commands
         .spawn_bundle(OrthographicCameraBundle::new_2d())
-        .insert(Free2DCamera {
-            current_zoom: 1.,
-            zoom_levels: 1..4,
-        });
+        .insert(Free2DCamera::new(1.0).with_scale_range((1.)..=4.));
 
     commands.spawn_bundle(UiCameraBundle::default());
 }
