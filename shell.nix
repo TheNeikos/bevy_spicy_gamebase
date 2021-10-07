@@ -1,7 +1,7 @@
 with import <nixpkgs>{};
 
 stdenv.mkDerivation {
-    name = "bevy-spicy-data";
+    name = "bevy-spicy-gamebase";
 
     buildInputs = [
         gcc
