@@ -17,7 +17,7 @@ It is meant as an experiment to see how ergonomic bevy game development can be
 - `main.rs`
   - The entry point of the project
   - The `GameAssets` structure is located here.
-    - You can extend it with your own assets (Don't forget to add them to the loadtracker below)
+    - You can extend it with your own assets (Don't forget to add them to the load tracker just below it)
 - `startup.rs`
   - One time setup for the _whole_ project
   - Per-stage startup systems should be registered in the respective stage file
