@@ -1,11 +1,8 @@
 use std::ops::RangeInclusive;
 
 use bevy::{
-    input::mouse::{MouseMotion, MouseWheel},
-    math::Vec3Swizzles,
-    prelude::*,
-    render::camera::OrthographicProjection,
-    window::WindowResized,
+    input::mouse::MouseWheel, math::Vec3Swizzles, prelude::*,
+    render::camera::OrthographicProjection, window::WindowResized,
 };
 
 #[derive(Debug, Default)]
@@ -28,10 +25,17 @@ impl Plugin for CameraPlugin {
     }
 }
 
+#[derive(Debug)]
+struct DragPosition {
+    cursor_position: Vec2,
+    camera_position: Vec2,
+}
+
 pub struct Free2DCamera {
     pub current_scale: f32,
     pub scale_levels: RangeInclusive<f32>,
     pub limits: Option<Rect<f32>>,
+    start_drag: Option<DragPosition>,
 }
 
 impl Free2DCamera {
@@ -40,6 +44,7 @@ impl Free2DCamera {
             current_scale,
             scale_levels: current_scale..=current_scale,
             limits: None,
+            start_drag: None,
         }
     }
 
@@ -56,7 +61,7 @@ impl Free2DCamera {
 
 fn update_camera(
     mut mouse_wheel_events: EventReader<MouseWheel>,
-    mut mouse_movement_events: EventReader<MouseMotion>,
+    mut cursor_movement_events: EventReader<CursorMoved>,
     keyboard_input: Res<Input<KeyCode>>,
     mouse_input: Res<Input<MouseButton>>,
     windows: Res<Windows>,
@@ -65,13 +70,15 @@ fn update_camera(
         &mut OrthographicProjection,
         &mut Free2DCamera,
     )>,
+    mut last_cursor_position: Local<Vec2>,
 ) {
     let zoom_scroll: f32 = mouse_wheel_events.iter().map(|wheel| wheel.y).sum();
 
-    let mouse_movement: Vec2 = mouse_movement_events
-        .iter()
-        .map(|mov| mov.delta)
-        .fold(Vec2::ZERO, |acc, elem| acc + elem);
+    let cursor_position = cursor_movement_events.iter().map(|mov| mov.position).last();
+
+    if let Some(cursor_pos) = cursor_position {
+        *last_cursor_position = cursor_pos;
+    }
 
     let translation = {
         let mut dir = Vec2::ZERO;
@@ -121,10 +128,23 @@ fn update_camera(
             free_2d_camera.current_scale = new_scale;
         }
 
-        if mouse_movement != Vec2::ZERO && mouse_input.pressed(MouseButton::Right) {
-            transform.translation +=
-                (mouse_movement * Vec2::new(-1., 1.)).extend(0.) / free_2d_camera.current_scale;
-        } else if translation != Vec2::ZERO {
+        if mouse_input.pressed(MouseButton::Right) {
+            if free_2d_camera.start_drag.is_some() {
+                let start_drag = free_2d_camera.start_drag.as_ref().unwrap();
+                transform.translation = start_drag.camera_position.extend(transform.translation.z)
+                    + (start_drag.cursor_position - *last_cursor_position).extend(0.)
+                        / free_2d_camera.current_scale;
+            } else {
+                free_2d_camera.start_drag = Some(DragPosition {
+                    camera_position: transform.translation.xy(),
+                    cursor_position: *last_cursor_position,
+                });
+            }
+        } else {
+            free_2d_camera.start_drag = None;
+        }
+
+        if translation != Vec2::ZERO {
             transform.translation += translation.extend(0.);
         }
     }
