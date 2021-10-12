@@ -23,4 +23,4 @@ jobs:
           override: true
 
       - name: Check code
-        run: cargo update && cargo check --lib --examples
+        run: cargo update && cargo check --all --examples
