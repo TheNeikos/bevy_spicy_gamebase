@@ -13,14 +13,15 @@ struct CameraStage;
 
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
-        app.add_stage_after(
-            CoreStage::Update,
+        app.add_stage_before(
+            CoreStage::PostUpdate,
             CameraStage,
             SystemStage::single_threaded()
                 .with_system(clamp_camera)
                 .with_system(align_camera),
         );
 
+        
         app.add_system(update_camera);
     }
 }
