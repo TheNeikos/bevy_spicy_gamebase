@@ -173,6 +173,7 @@ fn clamp_camera(
     let screen_size = Vec2::new(primary_window.width(), primary_window.height());
 
     for (mut transform, free_2d_camera, change_free_2d_camera) in camera_query.iter_mut() {
+        // If any of the inputs changed, we re-calculate the
         if !(transform.is_changed() || change_free_2d_camera.is_changed() || resize_event) {
             continue;
         }
