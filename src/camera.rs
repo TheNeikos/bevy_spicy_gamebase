@@ -73,6 +73,11 @@ fn update_camera(
     )>,
     mut last_cursor_position: Local<Vec2>,
 ) {
+    // Without cameras, we don't care
+    if camera_query.is_empty() {
+        return;
+    }
+
     let zoom_scroll: f32 = mouse_wheel_events.iter().map(|wheel| wheel.y).sum();
 
     let cursor_position = cursor_movement_events.iter().map(|mov| mov.position).last();
